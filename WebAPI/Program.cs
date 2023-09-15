@@ -1,3 +1,8 @@
+using Data;
+using Npgsql;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
 namespace WebAPI
 {
     public class Program
@@ -9,6 +14,11 @@ namespace WebAPI
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddDbContext<SmartShopContext>(options =>
+            {
+                options.UseNpgsql("name=ConnectionStrings:Postgres");
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
