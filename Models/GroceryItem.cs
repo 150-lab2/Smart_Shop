@@ -13,6 +13,7 @@ namespace Models
         public string? Store { get; init; }
         public string? Department { get; init; }
         public decimal? Price { get; init; }
+        public string Size { get; init; }
 
 
         // Factory Method to control class creation
