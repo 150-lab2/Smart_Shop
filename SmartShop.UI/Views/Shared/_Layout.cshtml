@@ -27,6 +27,11 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav d-flex">
+                        <li class="nav-item">
+                            @Html.ActionLink("My Account", "index", "userprofile", null, new { @class = "nav-link text-dark"})
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
