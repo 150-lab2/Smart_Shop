@@ -10,9 +10,9 @@ namespace SmartShop.UI.Controllers
     {
         public IActionResult Index()
         {
-            ViewBag.User = GoogleUser.Create((ClaimsIdentity)User.Identity);
+            var model = GoogleUser.Create(User.Identity);
 
-            return View();
+            return View(model);
         }
 
     }

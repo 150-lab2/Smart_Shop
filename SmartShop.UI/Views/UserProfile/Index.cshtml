@@ -1,9 +1,6 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-    var googleUser = (GoogleUser)ViewBag.User;
-}
+﻿@model GoogleUser
+
+
 <style type="text/css">
    img.user-image {
         border-radius: 50%;
@@ -14,12 +11,12 @@
 <div class="card" style="max-width: 400px;">
     <div class="row g-0">
         <div class="col-md-4 user-image">
-            <img class="user-image" src="@googleUser.Picture" alt="User Profile Photo"/>
+            <img class="user-image" src="@Model.Picture" alt="User Profile Photo"/>
         </div>
         <div class="col-md-8">
             <div class="card-body">
-                <h3 class="card-title">@googleUser.Name</h3>
-                <p class="card-text">@googleUser.Email</p>
+                <h3 class="card-title">@Model.Name</h3>
+                <p class="card-text">@Model.Email</p>
             </div>
         </div>
     </div>
