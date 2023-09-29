@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace SmartShop.UI
 {
@@ -19,16 +22,21 @@ namespace SmartShop.UI
             });
 
             builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-            })
+                {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+                })
                 .AddCookie()
                 .AddGoogle(googleOptions =>
                     {
                         googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
                         googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                        
+                        // Map the external picture claim to the internally used image claim
+                        googleOptions.ClaimActions.MapJsonKey("image", "picture");
+                        googleOptions.Scope.Add("profile");
                     });
+
 
             var app = builder.Build();
 
