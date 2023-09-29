@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+
 namespace SmartShop.UI
 {
     public class Program
@@ -5,9 +8,27 @@ namespace SmartShop.UI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var configuration = builder.Configuration;
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddCookiePolicy(opts =>
+            {
+
+            });
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            })
+                .AddCookie()
+                .AddGoogle(googleOptions =>
+                    {
+                        googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+                        googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                    });
 
             var app = builder.Build();
 
@@ -23,6 +44,8 @@ namespace SmartShop.UI
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
