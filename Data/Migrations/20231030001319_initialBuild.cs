@@ -15,11 +15,12 @@ namespace Data.Migrations
                 name: "GroceryItem",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Store = table.Column<string>(type: "text", nullable: true),
-                    Department = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    Price = table.Column<decimal>(type: "numeric", nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Store = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Department = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Size = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,8 +31,8 @@ namespace Data.Migrations
                 name: "Recipe",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,8 +43,8 @@ namespace Data.Migrations
                 name: "GroceryItemRecipe",
                 columns: table => new
                 {
-                    ItemsId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RecipeId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ItemsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RecipeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {

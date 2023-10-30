@@ -1,5 +1,4 @@
 using Data;
-using Npgsql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -16,7 +15,7 @@ namespace WebAPI
             builder.Services.AddControllers();
             builder.Services.AddDbContext<SmartShopContext>(options =>
             {
-                options.UseNpgsql("name=ConnectionStrings:Postgres");
+                options.UseSqlServer("name=ConnectionStrings:SmartShop");
             });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
