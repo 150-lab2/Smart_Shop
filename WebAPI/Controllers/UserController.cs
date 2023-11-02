@@ -76,8 +76,14 @@ namespace WebAPI.Controllers
 
             if (currentProfile == null) { return NotFound(); }
 
-            currentProfile.AllergiesJSON= model.AllergiesJSON;
-            currentProfile.DietTypesJSON= model.DietTypesJSON;
+            if(!string.IsNullOrWhiteSpace(model.FirstName))
+                currentProfile.FirstName = model.FirstName;
+
+            if(!string.IsNullOrWhiteSpace(model.LastName))  
+                currentProfile.LastName = model.LastName;
+
+            currentProfile.AllergiesJSON = model.AllergiesJSON;
+            currentProfile.DietTypesJSON = model.DietTypesJSON;
 
             _dbContext.SaveChanges();
 

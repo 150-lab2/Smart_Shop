@@ -13,6 +13,9 @@ namespace Data.Config
     {
         public void Configure(EntityTypeBuilder<UserProfile> builder)
         {
+            builder.Property(m => m.FirstName).HasMaxLength(25);
+            builder.Property(m => m.LastName).HasMaxLength(50);
+
             builder.Property(m => m.DietTypesJSON).HasMaxLength(512);
             builder.Property(m => m.AllergiesJSON).HasMaxLength(512);
             builder.Property(m => m.EmailAddress).HasMaxLength(128);
