@@ -1,6 +1,8 @@
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.OpenApi.Models;
+using WebAPI.Middleware;
 
 namespace WebAPI
 {
@@ -20,7 +22,32 @@ namespace WebAPI
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(x =>
+            {
+                x.AddSecurityDefinition("X-API-KEY", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+                {
+                    Name = "X-API-KEY",
+                    Type= Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                    Description = "ApiKey must appear in header"
+                });
+
+                x.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme()
+                        {
+                            Reference = new OpenApiReference()
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "X-API-KEY"
+                            },
+                            In = ParameterLocation.Header
+                        },
+                        new string[]{ }
+                    }
+                });
+            });
 
             var app = builder.Build();
 
@@ -30,6 +57,9 @@ namespace WebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseMiddleware<ApiKeyMiddleware>();
+
 
             app.UseHttpsRedirection();
 
