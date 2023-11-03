@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace SmartShop.UI.Controllers
 {
-    public class Recpie
+    public class Recipe
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -21,19 +21,19 @@ namespace SmartShop.UI.Controllers
 
         public IActionResult Index()
         {
-            var model = new List<Recpie>()
+            var model = new List<Recipe>()
             {
-                new Recpie()
+                new Recipe()
                 {
                     Name = "Test1",
                     Description = "Really goood meal"
                 },
-                new Recpie ()
+                new Recipe ()
                 {
                     Name = "Test 2",
                     Description = "Kinda Gross"
                 },
-                new Recpie()
+                new Recipe()
                 {
                     Name = "Test 3",
                     Description = "Pick Me!"
