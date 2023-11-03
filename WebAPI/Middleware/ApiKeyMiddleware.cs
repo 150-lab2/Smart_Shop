@@ -12,6 +12,7 @@
 
         public async Task Invoke(HttpContext context)
         {
+
             if(!context.Request.Headers.TryGetValue(ApiKey, out var value))
             {
                 context.Response.StatusCode = 401;
