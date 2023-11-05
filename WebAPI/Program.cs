@@ -2,6 +2,7 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
+using Org.OpenAPITools.Client;
 using WebAPI.Middleware;
 
 namespace WebAPI
@@ -47,6 +48,14 @@ namespace WebAPI
                         new string[]{ }
                     }
                 });
+            });
+
+            //builder.Services.Configure<SpoonacularConfig>(_configuration.GetSection("Spoonacular"));
+            builder.Services.AddHttpClient("SpoonacularClient", client =>
+            {
+                var config = builder.Configuration.GetSection("Spoonacular").Get<SpoonacularConfig>();
+                client.BaseAddress = new Uri(config.BaseUri);
+                client.DefaultRequestHeaders.Add(config.Header, config.Key); // Replace with your actual API key
             });
 
             var app = builder.Build();
