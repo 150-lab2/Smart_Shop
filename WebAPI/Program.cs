@@ -2,7 +2,6 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
-using Org.OpenAPITools.Client;
 using WebAPI.Middleware;
 
 namespace WebAPI

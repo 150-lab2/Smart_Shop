@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Org.OpenAPITools.Client;
-using Spoonacular.client;
-using Spoonacular.client.model;
 using System.Reflection.Metadata.Ecma335;
 
 namespace WebAPI.Controllers
