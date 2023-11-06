@@ -15,10 +15,12 @@ namespace WebAPI.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public RecipeController(IHttpClientFactory httpClientFactory)
+        public RecipeController(IHttpClientFactory httpClientFactory, SmartShopContext dbContext)
         {
             _httpClientFactory = httpClientFactory;
+            _dbContext = dbContext
         }
+
 
         [HttpGet]
         public async Task<string> Random(int count = 10)
@@ -90,7 +92,7 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         public async Task<ActionResult<string>> RandomForUser(Guid userId, string dietCsv, int count = 10)
-        {
+        {   
             try
             {
                 UriBuilder uriBuilder = new UriBuilder("https://api.spoonacular.com/recipes/complexSearch");
@@ -102,7 +104,7 @@ namespace WebAPI.Controllers
                 query["ignorePantry"] = "false";
                 query["number"] = count.ToString();
 
-                var userInfo = dbContext.Set<User>().Find(userId);
+                var userInfo = _dbContext.Set<User>().Find(userId);
                 if (userInfo == null)
                 {
                     return NotFound(); // Return a 404 Not Found response if the user is not found.
