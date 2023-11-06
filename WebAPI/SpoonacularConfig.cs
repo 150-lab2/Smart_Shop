@@ -6,7 +6,7 @@
     public class SpoonacularConfig
     {
         public string BaseUri { get; init; }
-        public string Header { get; init; }
-        public string Key { get; init; }
+        public string ApiKey { get; init; }
+        public string ApiSecret { get; init; }
     }
 }

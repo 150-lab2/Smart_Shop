@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Extensions.Options;
+using SmartShop.UI.Models;
 using System.Security.Claims;
 
 namespace SmartShop.UI
@@ -36,6 +37,14 @@ namespace SmartShop.UI
                         googleOptions.ClaimActions.MapJsonKey("image", "picture");
                         googleOptions.Scope.Add("profile");
                     });
+
+            // Add a factory for our SmartShopAPI client:
+            builder.Services.AddHttpClient("SmartShopClient", client =>
+            {
+                var config = configuration.GetSection("SmartShopApi").Get<SmartShopApiConfig>();
+                client.BaseAddress = new Uri(config.BaseUri);
+                client.DefaultRequestHeaders.Add(config.ApiKey, config.ApiSecret);
+            });
 
 
             var app = builder.Build();

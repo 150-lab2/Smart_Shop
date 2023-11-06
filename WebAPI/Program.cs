@@ -49,12 +49,11 @@ namespace WebAPI
                 });
             });
 
-            //builder.Services.Configure<SpoonacularConfig>(_configuration.GetSection("Spoonacular"));
             builder.Services.AddHttpClient("SpoonacularClient", client =>
             {
                 var config = builder.Configuration.GetSection("Spoonacular").Get<SpoonacularConfig>();
                 client.BaseAddress = new Uri(config.BaseUri);
-                client.DefaultRequestHeaders.Add(config.Header, config.Key); // Replace with your actual API key
+                client.DefaultRequestHeaders.Add(config.ApiKey, config.ApiSecret);
             });
 
             var app = builder.Build();

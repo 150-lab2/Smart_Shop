@@ -1,4 +1,4 @@
-﻿@model GoogleUser
+﻿@model Models.UserProfile
 
 
 <style type="text/css">
@@ -11,12 +11,12 @@
 <div class="card" style="max-width: 400px;">
     <div class="row g-0">
         <div class="col-md-4 user-image">
-            <img class="user-image" src="@Html.Encode(Model.Picture)" alt="User Profile Photo"/>
+            <img class="user-image" src="@Html.Encode(ViewData["GoogleImageUrl"])" alt="User Profile Photo"/>
         </div>
         <div class="col-md-8">
             <div class="card-body">
-                <h3 class="card-title">@Model.Name</h3>
-                <p class="card-text">@Model.Email</p>
+                <h3 class="card-title">@Model.FirstName @Model.LastName</h3>
+                <p class="card-text">@Model.EmailAddress</p>
             </div>
         </div>
     </div>
