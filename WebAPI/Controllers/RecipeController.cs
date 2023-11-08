@@ -108,11 +108,11 @@ namespace WebAPI.Controllers
                 query["ignorePantry"] = "false";
                 query["number"] = count.ToString();
 
-                //var userInfo = _dbContext.Set<UserProfile>().Find(userId);
+                var userInfo = _dbContext.Set<UserProfile>().Find(userId);
                 // Dummy User for testing
-                var userInfo = new UserProfile(){
-                    DietTypesJSON = "['Vegitarian']"
-                };
+               /* var userInfo = new UserProfile() {
+                    DietTypesJSON = JsonSerializer.Serialize(new string[] { "Vegitarian" })
+                };*/
                 
                 if (userInfo == null)
                 {
@@ -146,6 +146,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
+
                 Console.WriteLine(ex.Message);
                 return StatusCode(500, "Internal Server Error");
             }
