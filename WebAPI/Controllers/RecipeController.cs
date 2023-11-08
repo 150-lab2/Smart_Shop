@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Text.Json;
 using System.Linq;
+using System.Text.Json.Serialization;
+using Data;
+using Models;
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
@@ -14,11 +17,12 @@ namespace WebAPI.Controllers
     public class RecipeController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly SmartShopContext _dbContext;
 
         public RecipeController(IHttpClientFactory httpClientFactory, SmartShopContext dbContext)
         {
             _httpClientFactory = httpClientFactory;
-            _dbContext = dbContext
+            _dbContext = dbContext;
         }
 
 
@@ -91,7 +95,7 @@ namespace WebAPI.Controllers
         [HttpGet]
 
         [HttpGet]
-        public async Task<ActionResult<string>> RandomForUser(Guid userId, string dietCsv, int count = 10)
+        public async Task<ActionResult<string>> RandomForUser(Guid userId, int count = 10)
         {   
             try
             {
@@ -104,23 +108,24 @@ namespace WebAPI.Controllers
                 query["ignorePantry"] = "false";
                 query["number"] = count.ToString();
 
-                var userInfo = _dbContext.Set<User>().Find(userId);
+                //var userInfo = _dbContext.Set<UserProfile>().Find(userId);
+                // Dummy User for testing
+                var userInfo = new UserProfile(){
+                    DietTypesJSON = "['Vegitarian']"
+                };
+                
                 if (userInfo == null)
                 {
                     return NotFound(); // Return a 404 Not Found response if the user is not found.
                 }
 
                 // Check if the user has dietary restrictions and add them to the query
-                if (!string.IsNullOrWhiteSpace(userInfo.DietJson))
+                if (!string.IsNullOrWhiteSpace(userInfo.DietTypesJSON))
                 {
-                    var diets = JsonSerializer.Deserialize<string[]>(userInfo.DietJson);
-                    query["diet"] = string.Join(",", diets);
-                }
-
-                // Add user-specific dietary restrictions from 'dietCsv' if provided
-                if (!string.IsNullOrWhiteSpace(dietCsv))
-                {
-                    query["diet"] = string.Join(",", dietCsv.Split(',').Select(d => d.Trim()));
+                    var diets = JsonSerializer.Deserialize<string[]>(userInfo.DietTypesJSON);
+                    if(diets != null && diets.Any()){
+                        query["diet"] = string.Join(",", diets);
+                    }
                 }
 
                 uriBuilder.Query = query.ToString();
