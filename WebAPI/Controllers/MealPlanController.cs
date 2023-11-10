@@ -51,7 +51,7 @@ namespace WebAPI.Controllers
             if (mealPlan == null)
                 return NotFound();
 
-            if(mealPlan.recipe.id == recipeId){
+            if(mealPlan.recipe.id == recipeId){// not done 
                 BadRequest("recipe already exists in the meal plan");
             }
             // get the recipe from spoontacular
