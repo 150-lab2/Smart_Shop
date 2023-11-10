@@ -10,12 +10,9 @@ namespace Models
     {
         public Guid UserId { get; set; }
         public DateTime GeneratedDate { get; set; }
+        public DateOnly StartDate { get; set; }
+        public DateOnly EndDate { get; set; }
+        public List<Recipe> Recipes { get; set; } = new List<Recipe>();
 
-        public List<GroceryItem> ShoppingList = new List<GroceryItem>();
-
-        public void CalculateShoppingList()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

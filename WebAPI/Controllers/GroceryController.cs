@@ -18,37 +18,37 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpGet(Name = "GetGroceryList")]
-        public GroceryItem[] List()
-        {
-            var groceryItems = _dbContext.Set<GroceryItem>()
-                .ToArray();
-            return groceryItems;
-        }
+        //[HttpGet(Name = "GetGroceryList")]
+        //public GroceryItem[] List()
+        //{
+        //    var groceryItems = _dbContext.Set<GroceryItem>()
+        //        .ToArray();
+        //    return groceryItems;
+        //}
 
 
-        [HttpGet(Name = "GetGroceryItem")]
-        public ActionResult<GroceryItem> Item(Guid id)
-        {
-            var item = _dbContext.Set<GroceryItem>()
-                .SingleOrDefault(x => x.Id == id);
+        //[HttpGet(Name = "GetGroceryItem")]
+        //public ActionResult<GroceryItem> Item(Guid id)
+        //{
+        //    var item = _dbContext.Set<GroceryItem>()
+        //        .SingleOrDefault(x => x.Id == id);
 
-            if(item == null) { return NotFound(); }
+        //    if(item == null) { return NotFound(); }
 
-            return item;
-        }
+        //    return item;
+        //}
 
 
 
-        [HttpPost(Name = "AddItem")]
-        public StatusCodeResult Add(GroceryItem item)
-        {
-            if (item == null) { return BadRequest(); }
+        //[HttpPost(Name = "AddItem")]
+        //public StatusCodeResult Add(GroceryItem item)
+        //{
+        //    if (item == null) { return BadRequest(); }
 
-            _dbContext.Add(item);
-            _dbContext.SaveChanges();
-            return Ok();
-        }
+        //    _dbContext.Add(item);
+        //    _dbContext.SaveChanges();
+        //    return Ok();
+        //}
     }
 
 

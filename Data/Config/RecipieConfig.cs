@@ -12,13 +12,12 @@ namespace Data.Config
     {
         public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Recipe> builder)
         {
-            builder.Property(m => m.Name)
+            builder.Property(m => m.Title)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(70);
 
-            // Establish a many-to-many relationship between Recipe's and Grocery Items
-            builder.HasMany(m => m.Items)
-                .WithMany();
+            builder.Property(m => m.ApiId)
+                .HasMaxLength(25);
         }
     }
 }

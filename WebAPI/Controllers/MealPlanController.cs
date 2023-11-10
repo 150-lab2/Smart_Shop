@@ -23,6 +23,7 @@ namespace WebAPI.Controllers
             // Psudo: 1. Check that the user doesn't already have a meal plan for the same date range
             //        2. Create the meal plan record, add and save.
 
+
             throw new NotImplementedException();
         }
 
@@ -33,7 +34,7 @@ namespace WebAPI.Controllers
         /// <param name="recipeId"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> Recipe(Guid mealPlanId, string recipeId)
+        public async Task<ActionResult> AddRecipe(Guid mealPlanId, string recipeId)
         {
             // Psudo: 1. Get the meal plan. 2. If the recipe isn't already added, add the recipe
 
@@ -47,7 +48,7 @@ namespace WebAPI.Controllers
         /// <param name="recipeId"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task<ActionResult> Recipe(Guid mealPlanId, string recipeId)
+        public async Task<ActionResult> DeleteRecipe(Guid mealPlanId, string recipeId)
         {
             // Psudo: 1. Get the meal plan, 2. remove the recipe from the the associated collection, 3. Save
 
@@ -60,7 +61,7 @@ namespace WebAPI.Controllers
         /// <param name="mealPlanId"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<string>> Recipe(Guid mealPlanId)
+        public async Task<ActionResult<string>> GetRecipe(Guid mealPlanId)
         {
             // Psudo: 1. Get the meal plan associated recipies, 2. Query spoontacular for the recipe details, 3. return the recpies as a json array
 
@@ -73,7 +74,7 @@ namespace WebAPI.Controllers
         /// <param name="mealPlanId"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<GroceryItem[]>> ShoppingList(Guid mealPlanId)
+        public async Task<ActionResult<string>> ShoppingList(Guid mealPlanId)
         {
             // Psudo:  1. Get all the recipies, 2. Collect and consolidate ingredients, 3. Return the array
 
