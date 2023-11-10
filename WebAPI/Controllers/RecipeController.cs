@@ -90,9 +90,7 @@ namespace WebAPI.Controllers
                 Console.WriteLine(ex.Message);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
-
         }
-        [HttpGet]
 
         [HttpGet]
         public async Task<ActionResult<string>> RandomForUser(Guid userId, int count = 10)
