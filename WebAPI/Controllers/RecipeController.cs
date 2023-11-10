@@ -93,7 +93,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<string>> RandomForUser(Guid userId, int count = 10)
+        public async Task<ActionResult<string>> DietInfo(Guid userId, int count = 10)
         {   
             try
             {
@@ -123,6 +123,62 @@ namespace WebAPI.Controllers
                     var diets = JsonSerializer.Deserialize<string[]>(userInfo.DietTypesJSON);
                     if(diets != null && diets.Any()){
                         query["diet"] = string.Join(",", diets);
+                    }
+                }
+
+                uriBuilder.Query = query.ToString();
+                string apiUrl = uriBuilder.Uri.ToString();
+
+                var client = _httpClientFactory.CreateClient("SpoonacularClient");
+                HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    return Ok(responseBody); // Return a 200 OK response with the response body.
+                }
+                else
+                {
+                    return StatusCode((int)response.StatusCode, $"Error: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+         public async Task<ActionResult<string>> Allergy(Guid userId, int count = 10)
+        {   
+            try
+            {
+                UriBuilder uriBuilder = new UriBuilder("https://api.spoonacular.com/recipes/complexSearch");
+                var query = System.Web.HttpUtility.ParseQueryString(string.Empty); // Initialize the query string
+
+                // Set common query parameters
+                query["limitLicense"] = "true";
+                query["ranking"] = "1";
+                query["ignorePantry"] = "false";
+                query["number"] = count.ToString();
+
+                var userInfo = _dbContext.Set<UserProfile>().Find(userId);
+                // Dummy User for testing
+               /* var userInfo = new UserProfile() {
+                    DietTypesJSON = JsonSerializer.Serialize(new string[] { "Vegitarian" })
+                };*/
+                
+                if (userInfo == null)
+                {
+                    return NotFound(); // Return a 404 Not Found response if the user is not found.
+                }
+
+                // Check if the user has dietary restrictions and add them to the query
+                if (!string.IsNullOrWhiteSpace(userInfo.AllergiesJSON))
+                {
+                    var allergy = JsonSerializer.Deserialize<string[]>(userInfo.AllergiesJSON);
+                    if(allergy != null && allergy.Any()){
+                        query["allergy"] = string.Join(",", allergy);
                     }
                 }
 
