@@ -51,6 +51,9 @@ namespace WebAPI.Controllers
             if (mealPlan == null)
                 return NotFound();
 
+            if(mealPlan.recipe.id == recipeId){
+                BadRequest("recipe already exists in the meal plan");
+            }
             // get the recipe from spoontacular
 
             var recipie = Recipe.Create(mealPlanId, recipeId, "Name From Spoontacular");
