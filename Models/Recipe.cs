@@ -13,7 +13,7 @@ namespace Models
         public string ApiId { get; init; } = "";
         public string Title { get; init; } = "";
 
-        public static Recipe Create(Guid mealPlanId, string name, string ApiId, string title)
+        public static Recipe Create(Guid mealPlanId, string ApiId, string title)
         {
             return new Recipe()
             {

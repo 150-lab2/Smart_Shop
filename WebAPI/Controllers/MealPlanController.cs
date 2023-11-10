@@ -23,6 +23,10 @@ namespace WebAPI.Controllers
             // Psudo: 1. Check that the user doesn't already have a meal plan for the same date range
             //        2. Create the meal plan record, add and save.
 
+            if (_dbContext.Set<MealPlan>().Any(m => m.StartDate <= ending && m.EndDate >= starting))
+                return BadRequest("A meal plan already exists that covers this date range.");
+
+
 
             throw new NotImplementedException();
         }
@@ -38,7 +42,20 @@ namespace WebAPI.Controllers
         {
             // Psudo: 1. Get the meal plan. 2. If the recipe isn't already added, add the recipe
 
-            throw new NotImplementedException();
+            var mealPlan = _dbContext.Set<MealPlan>().Find(mealPlanId);
+
+            if (mealPlan == null)
+                return NotFound();
+
+            // get the recipe from spoontacular
+
+            var recipie = Recipe.Create(mealPlanId, recipeId, "Name From Spoontacular");
+            
+            mealPlan.Recipes.Add(recipie);
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
         }
 
         /// <summary>
