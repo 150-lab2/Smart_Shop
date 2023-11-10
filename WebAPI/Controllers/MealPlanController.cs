@@ -1,5 +1,6 @@
 ﻿using Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace WebAPI.Controllers
@@ -42,7 +43,10 @@ namespace WebAPI.Controllers
         {
             // Psudo: 1. Get the meal plan. 2. If the recipe isn't already added, add the recipe
 
-            var mealPlan = _dbContext.Set<MealPlan>().Find(mealPlanId);
+            var mealPlan = _dbContext
+                .Set<MealPlan>()
+                .Include(m => m.Recipes)
+                .SingleOrDefault(m => m.Id == mealPlanId);
 
             if (mealPlan == null)
                 return NotFound();

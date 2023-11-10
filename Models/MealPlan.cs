@@ -8,6 +8,7 @@ namespace Models
 {
     public class MealPlan
     {
+        public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public DateTime GeneratedDate { get; set; }
         public DateOnly StartDate { get; set; }
