@@ -26,7 +26,9 @@ namespace WebAPI.Controllers
 
             if (_dbContext.Set<MealPlan>().Any(m => m.StartDate <= ending && m.EndDate >= starting))
                 return BadRequest("A meal plan already exists that covers this date range.");
-
+            else{
+                return Ok();
+            }
 
 
             throw new NotImplementedException();
@@ -51,8 +53,11 @@ namespace WebAPI.Controllers
             if (mealPlan == null)
                 return NotFound();
 
+            if(mealPlan.recipe.Any()(m=>m.id == recipeId) ){
+                return BadRequest("recipe already exists in the meal plan");
+            }
             // get the recipe from spoontacular
-
+            else{
             var recipie = Recipe.Create(mealPlanId, recipeId, "Name From Spoontacular");
             
             mealPlan.Recipes.Add(recipie);
@@ -60,6 +65,7 @@ namespace WebAPI.Controllers
             await _dbContext.SaveChangesAsync();
 
             return Ok();
+            }
         }
 
         /// <summary>
@@ -71,7 +77,24 @@ namespace WebAPI.Controllers
         [HttpDelete]
         public async Task<ActionResult> DeleteRecipe(Guid mealPlanId, string recipeId)
         {
+            var mealPlan = _dbContext
+                .Set<MealPlan>()
+                .Include(m => m.Recipes)
+                .SingleOrDefault(m => m.Id == mealPlanId);
+
+            if (mealPlan == null)
+                return NotFound();
+        var recipeToRemove = mealPlan.Recipes.SingleOrDefault(r => r.Id.ToString() == recipeId);
+            if (recipeToRemove != null)
+        {
+            mealPlan.Recipes.Remove(recipeToRemove);
+            await _dbContext.SaveChangesAsync();
+
+            // Return the updated recipes as JSON
+            return Ok();
+        }
             // Psudo: 1. Get the meal plan, 2. remove the recipe from the the associated collection, 3. Save
+            
 
             throw new NotImplementedException();
         }
@@ -85,9 +108,50 @@ namespace WebAPI.Controllers
         public async Task<ActionResult<string>> GetRecipe(Guid mealPlanId)
         {
             // Psudo: 1. Get the meal plan associated recipies, 2. Query spoontacular for the recipe details, 3. return the recpies as a json array
+        var mealPlan = _dbContext.Set<MealPlan>().Find(mealPlanId);
 
-            throw new NotImplementedException();
+        if (mealPlan == null)
+            return NotFound();
+
+
+        // Extract recipe names from the MealPlan
+        var recipeNames = mealPlan.Recipes.Select(r => r.Name).ToList();
+
+      
+        var recipesJson = await GetRecipesDetailsAsync(recipeNames);
+
+        return Ok(recipesJson);
+    }
+
+    private async Task<IEnumerable<object>> GetRecipesDetailsAsync( List<string> recipeNames)
+    {
+        var recipesDetails = new List<object>();
+
+        var apiUrl = "https://api.spoonacular.com/recipes/complexSearch";
+
+        using (var client = _httpClientFactory.CreateClient())
+        {
+            // Create a batch request for all recipe names
+            var batchRequest = recipeNames.Select(name => new { id = 0, title = name }).ToList();
+
+            // Convert the batch request to JSON
+            var batchRequestJson = JsonSerializer.Serialize(batchRequest);
+
+            // Send the batch request to Spoonacular
+            var content = new StringContent(batchRequestJson, System.Text.Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(apiUrl, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Deserialize the JSON response into a list of recipe details
+                var recipesDetailsResponse = await response.Content.ReadAsAsync<List<object>>();
+                recipesDetails.AddRange(recipesDetailsResponse);
+            }
         }
+
+        return recipesDetails;
+        throw new NotImplementedException();
+    }
 
         /// <summary>
         /// Returns a shopping list for the meal plan
@@ -97,11 +161,55 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<string>> ShoppingList(Guid mealPlanId)
         {
+
+
+        var mealPlan = _dbContext.Set<MealPlan>().Find(mealPlanId);
+
+        if (mealPlan == null)
+            return NotFound();
+         var ingredientNames = mealPlan.Recipes.Select(r => r.ingredients).ToList(); // model needs rework
+
+      
+        var recipesString = await GetIngredientsArrayAsync(ingredientNames);
             // Psudo:  1. Get all the recipies, 2. Collect and consolidate ingredients, 3. Return the array
 
             throw new NotImplementedException();
         }
 
+        private async Task<IEnumerable<string>> GetIngredientsArrayAsync(List<string> ingredientNames)
+    {
+        var ingredientsArray = new List<string>();
+
+        var apiUrl = "https://api.spoonacular.com/recipes/complexSearch";
+
+
+        using (var client = _httpClientFactory.CreateClient())
+        {
+            foreach (var ingredientName in ingredientNames)
+            {
+                // Include any additional parameters needed for the Spoonacular API
+                var parameters = new Dictionary<string, string>
+                {
+                    { "query", ingredientName }
+                };
+
+                var response = await client.GetAsync(apiUrl, HttpCompletionOption.ResponseContentRead);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Deserialize the JSON response into an object
+                    var ingredientDetails = JsonConvert.DeserializeObject<object>(await response.Content.ReadAsStringAsync());
+
+                    // Extract relevant information from the Spoonacular response
+                    var ingredientInfo = ingredientDetails?.ToString(); // Adjust this based on Spoonacular's response structure
+
+                    ingredientsArray.Add(ingredientInfo);
+                }
+            }
+        }
+
+        return ingredientsArray;
+    }
 
     }
 }
