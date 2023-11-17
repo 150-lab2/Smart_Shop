@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using System.Net.Mail;
+using System.Text.Json;
 
 namespace WebAPI.Controllers
 {
@@ -30,8 +32,10 @@ namespace WebAPI.Controllers
                 return Ok();
             }
 
+            var newPlan = MealPlan.Create(userId, starting, ending);
+            _dbContext.Set<MealPlan>().Add(newPlan);
 
-            throw new NotImplementedException();
+            return Ok(newPlan.Id);
         }
 
         /// <summary>
@@ -53,18 +57,16 @@ namespace WebAPI.Controllers
             if (mealPlan == null)
                 return NotFound();
 
-            if(mealPlan.recipe.Any()(m=>m.id == recipeId) ){
+            if(mealPlan.Recipes.Any(m=>m.ApiId == recipeId) ){
                 return BadRequest("recipe already exists in the meal plan");
             }
-            // get the recipe from spoontacular
-            else{
-            var recipie = Recipe.Create(mealPlanId, recipeId, "Name From Spoontacular");
-            
-            mealPlan.Recipes.Add(recipie);
-
-            await _dbContext.SaveChangesAsync();
-
-            return Ok();
+            else {
+                // TODO: If the recipie properties isn't already in our database, get the recipe from spoontacular and add it, then add
+                //       the reference
+                //var recipie = Recipe.Create(mealPlanId, recipeId, "Name From Spoontacular");            
+                //mealPlan.Recipes.Add(recipie);
+                await _dbContext.SaveChangesAsync();
+                return Ok();
             }
         }
 
@@ -84,19 +86,15 @@ namespace WebAPI.Controllers
 
             if (mealPlan == null)
                 return NotFound();
-        var recipeToRemove = mealPlan.Recipes.SingleOrDefault(r => r.Id.ToString() == recipeId);
+
+            var recipeToRemove = mealPlan.Recipes.SingleOrDefault(r => r.Id.ToString() == recipeId);
             if (recipeToRemove != null)
-        {
-            mealPlan.Recipes.Remove(recipeToRemove);
-            await _dbContext.SaveChangesAsync();
+            {
+                mealPlan.Recipes.Remove(recipeToRemove);
+                await _dbContext.SaveChangesAsync();
+            }
 
-            // Return the updated recipes as JSON
             return Ok();
-        }
-            // Psudo: 1. Get the meal plan, 2. remove the recipe from the the associated collection, 3. Save
-            
-
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -105,7 +103,7 @@ namespace WebAPI.Controllers
         /// <param name="mealPlanId"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<string>> GetRecipe(Guid mealPlanId)
+        public async Task<ActionResult<string>> GetRecipes(Guid mealPlanId)
         {
             // Psudo: 1. Get the meal plan associated recipies, 2. Query spoontacular for the recipe details, 3. return the recpies as a json array
         var mealPlan = _dbContext.Set<MealPlan>().Find(mealPlanId);
@@ -115,15 +113,17 @@ namespace WebAPI.Controllers
 
 
         // Extract recipe names from the MealPlan
-        var recipeNames = mealPlan.Recipes.Select(r => r.Name).ToList();
+        var recipeIds = mealPlan.Recipes
+                .Select(r => r.ApiId)
+                .ToList();
 
       
-        var recipesJson = await GetRecipesDetailsAsync(recipeNames);
+        var recipesJson = await GetRecipesDetailsAsync(recipeIds);
 
         return Ok(recipesJson);
     }
 
-    private async Task<IEnumerable<object>> GetRecipesDetailsAsync( List<string> recipeNames)
+    private async Task<IEnumerable<object>> GetRecipesDetailsAsync( List<string> recipeIds)
     {
         var recipesDetails = new List<object>();
 
@@ -132,7 +132,7 @@ namespace WebAPI.Controllers
         using (var client = _httpClientFactory.CreateClient())
         {
             // Create a batch request for all recipe names
-            var batchRequest = recipeNames.Select(name => new { id = 0, title = name }).ToList();
+            var batchRequest = recipeIds.Select(id => new { id = id }).ToList();
 
             // Convert the batch request to JSON
             var batchRequestJson = JsonSerializer.Serialize(batchRequest);
@@ -144,13 +144,12 @@ namespace WebAPI.Controllers
             if (response.IsSuccessStatusCode)
             {
                 // Deserialize the JSON response into a list of recipe details
-                var recipesDetailsResponse = await response.Content.ReadAsAsync<List<object>>();
+                var recipesDetailsResponse = await response.Content.ReadFromJsonAsync<List<object>>();
                 recipesDetails.AddRange(recipesDetailsResponse);
             }
         }
 
         return recipesDetails;
-        throw new NotImplementedException();
     }
 
         /// <summary>
@@ -161,19 +160,18 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<string>> ShoppingList(Guid mealPlanId)
         {
+            var mealPlan = _dbContext.Set<MealPlan>().Find(mealPlanId);
 
-
-        var mealPlan = _dbContext.Set<MealPlan>().Find(mealPlanId);
-
-        if (mealPlan == null)
-            return NotFound();
-         var ingredientNames = mealPlan.Recipes.Select(r => r.ingredients).ToList(); // model needs rework
-
-      
-        var recipesString = await GetIngredientsArrayAsync(ingredientNames);
-            // Psudo:  1. Get all the recipies, 2. Collect and consolidate ingredients, 3. Return the array
+            if (mealPlan == null)
+                return NotFound();
 
             throw new NotImplementedException();
+            // var ingredientNames = mealPlan.Recipes.Select(r => r.Ingredients).ToList(); // model needs rework
+
+      
+            //var recipesString = await GetIngredientsArrayAsync(ingredientNames);
+            // Psudo:  1. Get all the recipies, 2. Collect and consolidate ingredients, 3. Return the array
+
         }
 
         private async Task<IEnumerable<string>> GetIngredientsArrayAsync(List<string> ingredientNames)
@@ -198,7 +196,7 @@ namespace WebAPI.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     // Deserialize the JSON response into an object
-                    var ingredientDetails = JsonConvert.DeserializeObject<object>(await response.Content.ReadAsStringAsync());
+                    var ingredientDetails = JsonSerializer.Deserialize<object>(await response.Content.ReadAsStringAsync());
 
                     // Extract relevant information from the Spoonacular response
                     var ingredientInfo = ingredientDetails?.ToString(); // Adjust this based on Spoonacular's response structure
