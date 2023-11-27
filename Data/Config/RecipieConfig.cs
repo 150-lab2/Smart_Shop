@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -12,12 +13,27 @@ namespace Data.Config
     {
         public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Recipe> builder)
         {
-            builder.Property(m => m.Title)
+            builder
+                .Property(m => m.Title)
                 .IsRequired()
                 .HasMaxLength(70);
 
-            builder.Property(m => m.ApiId)
+            builder
+                .Property(m => m.ApiId)
                 .HasMaxLength(25);
+
+            builder
+                .Property(m => m.ApiUri)
+                .HasMaxLength(255);
+
+            builder
+                .Property(m => m.Description)
+                .HasMaxLength(500);
+
+            builder
+                .HasMany(m => m.Ingredients)
+                .WithMany();
+
         }
     }
 }
