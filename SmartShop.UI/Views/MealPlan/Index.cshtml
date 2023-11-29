@@ -1,95 +1,158 @@
 ﻿@model string
 
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meal Plan</title>
+    <title>Shopping Cart</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        .product {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 10px;
+            text-align: center;
+            background-color: #fff;
+        }
+
+        #cart {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
             margin: 20px;
         }
 
-        #recipe-container {
-            max-width: 600px;
-            margin: auto;
-        }
+            #cart h2 {
+                text-align: center;
+            }
 
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        #ingredients-list {
-            list-style-type: none;
+        #cart-list {
+            list-style: none;
             padding: 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #total {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .remove-btn {
+            cursor: pointer;
+            color: red;
+        }
+
+        #checkout-btn {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div id="recipe-container">
-        <h1 id="recipe-title"></h1>
-        <img id="recipe-image" alt="Recipe Image">
+    <header>
+        <h1>Meal Plan</h1>
+    </header>
 
-        <p id="recipe-summary"></p>
-
-        <h2>Ingredients:</h2>
-        <ul id="ingredients-list">
-            <!-- Ingredients will be added here using JavaScript -->
-        </ul>
-
-        <h2>Instructions:</h2>
-        <div id="instructions">
-            <!-- Instructions will be added here using JavaScript -->
+    <div id="product-list">
+        <div class="product" id="product1">
+            <h2>Product 1</h2>
+            <p>Price: $10</p>
+            <button onclick="addToCart('Product 1', 10)">Add to Cart</button>
         </div>
+
+        <div class="product" id="product2">
+            <h2>Product 2</h2>
+            <p>Price: $20</p>
+            <button onclick="addToCart('Product 2', 20)">Add to Cart</button>
+        </div>
+
+        <!-- Add more products as needed -->
+    </div>
+
+    <div id="cart">
+        <ul id="cart-list"></ul>
+        <div id="total">Total: $<span id="cart-total">0</span></div>
+        <button id="checkout-btn" onclick="checkout();">Checkout</button>
     </div>
 
     <script>
-        // Extract data from the provided JSON
-        const recipeResults = @Html.Raw(Model);
+        let cart = [];
 
-        let recipe = recipeResults.recipes[0];
+        function addToCart(productName, price) {
+            cart.push({ name: productName, price: price });
+            updateCart();
+        }
 
-        // Display recipe details
-        document.getElementById('recipe-title').textContent = recipe.title;
-        document.getElementById('recipe-image').src = recipe.image;
-        document.getElementById('recipe-summary').innerHTML = recipe.summary;
+        function updateCart() {
+            const cartList = document.getElementById('cart-list');
+            const cartTotal = document.getElementById('cart-total');
 
-        // Display ingredients
-        const ingredientsList = document.getElementById('ingredients-list');
-        recipe.extendedIngredients.forEach(ingredient => {
-            const li = document.createElement('li');
-            li.textContent = `${ingredient.original}`;
-            ingredientsList.appendChild(li);
-        });
+            // Clear the current list
+            cartList.innerHTML = '';
 
-        // Display instructions
-        const instructionsDiv = document.getElementById('instructions');
-        const steps = recipe.analyzedInstructions[0].steps;
-        steps.forEach(step => {
-            const p = document.createElement('p');
-            p.innerHTML = `<strong>Step ${step.number}:</strong> ${step.step}`;
-            instructionsDiv.appendChild(p);
-        });
+            // Populate the cart list
+            cart.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('cart-item');
+                listItem.innerHTML = `
+                            <span>${item.name}</span>
+                            <span>$${item.price}</span>
+                        `;
+                cartList.appendChild(listItem);
+            });
+
+            // Calculate and display the total
+            const total = cart.reduce((acc, item) => acc + item.price, 0);
+            cartTotal.textContent = total.toFixed(2);
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function checkout() {
+            // Perform checkout logic here
+            // For now, display a simple alert
+            alert('Thank you for your purchase!');
+
+            // Clear the cart after checkout
+            cart = [];
+            updateCart();
+        }
     </script>
 
-        
-    <table border="4">
-        <tr>
-            <th>Company</th>
-            <th>Contact</th>
-            <th>Country</th>
-        </tr>
-        <tr>
-            <td>Alfreds Futterkiste</td>
-            <td>Maria Anders</td>
-            <td>Germany</td>
-        </tr>
-    </table>
-
 </body>
-</html>
-
