@@ -92,5 +92,10 @@ namespace SmartShop.UI.Controllers
             return RedirectToAction("Index", "UserProfile");
         }
 
+        public IActionResult Logout()
+        {
+            return View();
+        }
+
     }
 }

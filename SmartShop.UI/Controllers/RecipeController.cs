@@ -45,23 +45,21 @@ namespace SmartShop.UI.Controllers
             return View("Index", rawJsonData);
         }
 
-        public async Task<IActionResult> ViewRecipe()
+        public async Task<IActionResult> ViewRecipe(string recipeData)
         {
             // Retrieve our local user, if not existing, create a new user profile
             var smartShopClient = _httpClientFactory.CreateClient("SmartShopClient");
 
-            var rawJson = await smartShopClient.GetStringAsync($"/api/Recipe/Random?count=10");
-
             try
             {
                 // Read the encoded JSON data from the query parameters
-                string rawJsonData = Request.Query["encodedRecipe"];
+              //  string rawJsonData = Request.Query["encodedRecipe"];
 
                 // Decode the URL-encoded JSON string
-                string decodedJsonData = Uri.UnescapeDataString(rawJsonData);
+             //   string decodedJsonData = Uri.EscapeDataString(recipeData);
 
                 // Pass the decoded JSON string to the view
-                return View("Recipe", decodedJsonData);
+                return View("Recipe", recipeData);
             }
             catch (Exception ex)
             {
