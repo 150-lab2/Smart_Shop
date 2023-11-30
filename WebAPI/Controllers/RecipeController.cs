@@ -33,6 +33,30 @@ namespace WebAPI.Controllers
             _dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Retrieves a specific Recipe
+        /// </summary>
+        /// <param name="id">GUID id of the profile to retrieve.</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<string> GetRecipe(string id)
+        {
+            var client = _httpClientFactory.CreateClient("SpoonacularClient");
+            HttpResponseMessage response = await client.GetAsync($"/recipes/{id}/information");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseBody = await response.Content.ReadAsStringAsync();
+                await response.Content.ReadFromJsonAsync<RecpieListResult>();
+                return responseBody;
+            }
+            else
+            {
+                // Handle error if the request is not successful
+                return $"Error: {response.StatusCode}";
+            }
+        }
+
 
         [HttpGet]
         public async Task<string> Random(int count = 10)
@@ -44,7 +68,7 @@ namespace WebAPI.Controllers
             {
                 string responseBody = await response.Content.ReadAsStringAsync();
 
-                var test = await response.Content.ReadFromJsonAsync<RecpieListResult>();
+                //var test = await response.Content.ReadFromJsonAsync<RecpieListResult>();
 
 
 

@@ -45,20 +45,13 @@ namespace SmartShop.UI.Controllers
             return View("Index", rawJsonData);
         }
 
-        public async Task<IActionResult> ViewRecipe(string recipeData)
+        public async Task<IActionResult> ViewRecipe(string id)
         {
-            // Retrieve our local user, if not existing, create a new user profile
-            var smartShopClient = _httpClientFactory.CreateClient("SmartShopClient");
-
             try
             {
-                // Read the encoded JSON data from the query parameters
-              //  string rawJsonData = Request.Query["encodedRecipe"];
-
-                // Decode the URL-encoded JSON string
-             //   string decodedJsonData = Uri.EscapeDataString(recipeData);
-
-                // Pass the decoded JSON string to the view
+                var smartShopClient = _httpClientFactory.CreateClient("SmartShopClient");
+                ///                                                          Recipe/GetRecipe?id=641730
+                var recipeData = await smartShopClient.GetStringAsync($"/api/Recipe/GetRecipe?id={id}");
                 return View("Recipe", recipeData);
             }
             catch (Exception ex)
