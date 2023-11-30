@@ -61,7 +61,7 @@ namespace SmartShop.UI.Controllers
                 string decodedJsonData = Uri.UnescapeDataString(rawJsonData);
 
                 // Pass the decoded JSON string to the view
-                return View("Index1", decodedJsonData);
+                return View("Recipe", decodedJsonData);
             }
             catch (Exception ex)
             {

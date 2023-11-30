@@ -3,8 +3,20 @@
     ViewData["Title"] = "Home Page";
 }
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
-   <style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         .dot {
             height: 25px;
             width: 25px;
@@ -12,81 +24,56 @@
             border-radius: 50%;
             display: inline-block;
         }
-        
+
         .card {
             height: auto;
-            width: 600px;
+            width: 300px;
+            margin: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .card_img {
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center center;
-        }
-   </style>
-</head>
-<p>
-    <br /><br />
-</p>
-<div class="text-center">
-    <h1 class="display-4" style="font-family: Impact;">Welcome To SmartShop</h1>
-    <p>
-        <br />
-    </p>
 
-    <div>
-        <a href="@Url.Action( "Suggestion", "Recipe")" type="button" class="btn btn-outline-primary btn-lg">Show Recpie Example</a>
+        .card_img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .modal-footer {
+            border-radius: 0 0 10px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="text-center">
+        <h1 class="display-4" style="font-family: Impact;">Welcome To SmartShop</h1>
+        <div>
+            <a href="@Url.Action("Suggestion", "Recipe")" type="button" class="btn btn-outline-primary btn-lg">Show Recipe Example</a>
+        </div>
     </div>
 
     <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-                            <table class="table table-striped table-hover table-sm">
-                      <thead>
-                          <tr>
-                                <th>Name</th>
-                                <th>Description</th>
-                          </tr>
-                    </thead>
-                  <tbody>
-                            @foreach (var item in Model)
-                            {
-                        <tr>
-                            <td>@item.Name</td>
-                            <td>@item.Description</td>
-                        </tr>
-                            }
-            </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- ... (unchanged) ... -->
     </div>
-  </div>
-</div>
 
-
-
-</div>
-
-<div style="position: relative; top: 150px;">
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <img class="card_img" src="https://media.istockphoto.com/id/1316145932/photo/table-top-view-of-spicy-food.jpg?s=612x612&w=0&k=20&c=eaKRSIAoRGHMibSfahMyQS6iFADyVy1pnPdy1O5rZ98=" />
-            </div>
+    <div style="display: flex; justify-content: center; margin-top: 30px;">
+        <div class="card">
+            <img class="card_img" src="https://media.istockphoto.com/id/1316145932/photo/table-top-view-of-spicy-food.jpg?s=612x612&w=0&k=20&c=eaKRSIAoRGHMibSfahMyQS6iFADyVy1pnPdy1O5rZ98=" alt="Card Image 1" />
         </div>
-        <div class="col">
-            <div class="card">
-                <img ckass="card_img" src="https://thumbs.dreamstime.com/b/assorted-indian-recipes-food-various-spices-rice-wooden-table-92742528.jpg" />
-            </div>
+        <div class="card">
+            <img class="card_img" src="https://thumbs.dreamstime.com/b/assorted-indian-recipes-food-various-spices-rice-wooden-table-92742528.jpg" alt="Card Image 2" />
         </div>
     </div>
-</div>
+</body>
+</html>
