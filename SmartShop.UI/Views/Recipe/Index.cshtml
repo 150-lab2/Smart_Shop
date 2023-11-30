@@ -13,8 +13,18 @@
         }
 
         #recipe-container {
-            max-width: 600px;
+            max-width: 800px;
             margin: auto;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .col {
+            flex: 0 0 48%; /* Adjust the width as needed */
         }
 
         img {
@@ -29,14 +39,16 @@
     </style>
 </head>
 <body>
+    <div>
+        <h1 style="text-align: center;">Recipes</h1>
+        <br /><hr />
+    </div>
 
+    <div id="recipe-div" class="recipe-container">
+    </div>
     <script>
         // Extract data from the provided JSON
         const recipeResults = @Html.Raw(Model);
-
-        var recipeRow = document.createElement('div');
-        recipeRow.classList.add('recipe-row');
-
 
         // Iterate through the recipes array
         for (let i = 0; i < recipeResults.recipes.length; i++) {
@@ -44,9 +56,13 @@
 
             // Create a new row container for every two recipes
             if (i % 2 === 0) {
-                let recipeRow = document.createElement('div');
-                recipeRow.classList.add('recipe-row');
+                var recipeRow = document.createElement('div');
+                recipeRow.classList.add('row');
             }
+
+            // Create a column for each recipe
+            var recipeCol = document.createElement('div');
+            recipeCol.classList.add('col');
 
             // Display recipe details for each recipe
             let recipeContainer = document.createElement('div');
@@ -59,20 +75,15 @@
             titleElement.textContent = recipe.title;
 
             // Append title and image elements to the container
-            
-            recipeContainer.appendChild(imageElement);
-            recipeContainer.appendChild(titleElement);
+            recipeCol.appendChild(imageElement);
+            recipeCol.appendChild(titleElement);
 
-            // Append the container to the current row or document body
-            if (i % 2 === 0) {
-                recipeRow.appendChild(recipeContainer);
-                document.body.appendChild(recipeRow);
-            } else {
-                document.body.appendChild(recipeContainer);
-            }
+            // Append the column to the current row
+            recipeRow.appendChild(recipeCol);
+
+            // Append the row to the recipe container
+            document.getElementById("recipe-div").appendChild(recipeRow);
         }
     </script>
-
-
 </body>
 </html>
