@@ -36,6 +36,11 @@
             list-style-type: none;
             padding: 0;
         }
+
+        .button {
+            width: 50px;
+            height: 25px;
+        }
     </style>
 </head>
 <body>
@@ -74,9 +79,50 @@
             let titleElement = document.createElement('h2');
             titleElement.textContent = recipe.title;
 
+            // Create view button for each recipe
+            var viewRecipe = document.createElement('button');
+            viewRecipe.textContent = "VIEW";
+            viewRecipe.style
+
+            // Add an event listener to the button
+            viewRecipe.addEventListener('click', function () {
+                // Handle the button click event here
+                console.log('Button clicked for recipe:', recipe.title);
+                
+                // Create an object with the properties you want to encode
+                var recipeData = {
+                    id: recipe.id,
+                    //title: recipe.title,
+                    // Add other properties as needed
+                };
+
+                // Convert the recipe object to a JSON string and encode it
+                var encodedRecipe = encodeURIComponent(JSON.stringify(recipeData));
+
+                // Construct the URL dynamically with the encoded recipe as a query parameter
+                var url = '@Url.Action("ViewRecipe", "Recipe")' +
+                    '?encodedRecipe=' + encodedRecipe;
+
+                // Open a new window/tab with the constructed URL
+                window.open(url, '_blank');
+            });
+
+            // Create button for each recipe
+            var addRecipe = document.createElement('button');
+            addRecipe.textContent = "ADD";
+
+            // Add an event listener to the button
+            addRecipe.addEventListener('click', function () {
+                // Handle the button click event here
+                console.log('Button clicked for recipe:', recipe.title);
+                // You can add your logic to handle the button click event
+            });
+
             // Append title and image elements to the container
             recipeCol.appendChild(imageElement);
             recipeCol.appendChild(titleElement);
+            recipeCol.appendChild(viewRecipe);
+            recipeCol.appendChild(addRecipe);
 
             // Append the column to the current row
             recipeRow.appendChild(recipeCol);
@@ -84,6 +130,7 @@
             // Append the row to the recipe container
             document.getElementById("recipe-div").appendChild(recipeRow);
         }
+
     </script>
 </body>
 </html>

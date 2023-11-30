@@ -34,6 +34,43 @@ namespace SmartShop.UI.Controllers
             return View("Index", rawJsonData);
         }
 
+        public async Task<IActionResult> Search()
+        {
+            // Retrieve our local user, if not existing, create a new user profile
+            var smartShopClient = _httpClientFactory.CreateClient("SmartShopClient");
+
+            var rawJsonData = await smartShopClient.GetStringAsync($"/api/Recipe/Random?count=10");
+
+
+            return View("Index", rawJsonData);
+        }
+
+        public async Task<IActionResult> ViewRecipe()
+        {
+            // Retrieve our local user, if not existing, create a new user profile
+            var smartShopClient = _httpClientFactory.CreateClient("SmartShopClient");
+
+            var rawJson = await smartShopClient.GetStringAsync($"/api/Recipe/Random?count=10");
+
+            try
+            {
+                // Read the encoded JSON data from the query parameters
+                string rawJsonData = Request.Query["encodedRecipe"];
+
+                // Decode the URL-encoded JSON string
+                string decodedJsonData = Uri.UnescapeDataString(rawJsonData);
+
+                // Pass the decoded JSON string to the view
+                return View("Index1", decodedJsonData);
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception, log it, or redirect to an error page
+                Console.WriteLine("Error: " + ex.Message);
+                return RedirectToAction("Error");
+            }
+        }
+
         public IActionResult Index()
         {
             return View();
