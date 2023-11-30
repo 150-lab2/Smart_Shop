@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using SmartShop.UI.Models;
 using Models;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace SmartShop.UI.Controllers
 {
@@ -10,6 +12,11 @@ namespace SmartShop.UI.Controllers
     public class UserProfileController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+
+        private readonly JsonSerializerOptions serializerOptions = new JsonSerializerOptions
+        {
+            Converters = { new JsonStringEnumConverter() }
+        };
 
         public UserProfileController(IHttpClientFactory httpClientFactory)
         {
@@ -30,8 +37,13 @@ namespace SmartShop.UI.Controllers
             try
             {
                 var userId = await smartShopClient.GetStringAsync($"/api/User/FindUserId?email={encodedEmail}");
-                var model = await smartShopClient.GetFromJsonAsync<UserProfile>($"/api/User/GetUser?id={userId.Trim('"')}");
+                var model = await smartShopClient.GetFromJsonAsync<UserProfileVM>($"/api/User/GetUser?id={userId.Trim('"')}");
+                if (model?.AllergiesJSON != null)
+                {
+                    model.Allergies = JsonSerializer.Deserialize<List<Allergies>>(model.AllergiesJSON, serializerOptions) ?? new List<Allergies>();
+                }
                 return View(model);
+
             } catch (HttpRequestException ex)
             {
                 if(ex.StatusCode.HasValue && ex.StatusCode.Value == System.Net.HttpStatusCode.NotFound)
@@ -49,11 +61,35 @@ namespace SmartShop.UI.Controllers
 
                     var response = await smartShopClient.PostAsJsonAsync<UserProfile>("/api/User/PostUser", newUser);
                     if (response.IsSuccessStatusCode)
-                        return View(newUser);
+                    {
+                        var userId = await smartShopClient.GetStringAsync($"/api/User/FindUserId?email={encodedEmail}");
+                        var model = await smartShopClient.GetFromJsonAsync<UserProfileVM>($"/api/User/GetUser?id={userId.Trim('"')}");
+                        return View(model);
+                    }
                 }
             }
             
             return new StatusCodeResult(StatusCodes.Status404NotFound);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Preferences(UserProfileVM model)
+        {
+            var userInfo = new UserProfile()
+            {
+                Id = model.Id,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                EmailAddress = model.EmailAddress,
+                AllergiesJSON = JsonSerializer.Serialize(model.Allergies, serializerOptions),
+                DietTypesJSON = "[]",
+            };
+
+            var smartShopClient = _httpClientFactory.CreateClient("SmartShopClient");
+            var response = await smartShopClient.PutAsJsonAsync<UserProfile>("/api/User/PutUser", userInfo);
+
+            return RedirectToAction("Index", "UserProfile");
         }
 
     }

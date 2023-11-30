@@ -1,5 +1,4 @@
-﻿@model Models.UserProfile
-
+﻿@model UserProfileVM
 
 <style type="text/css">
    img.user-image {
@@ -132,24 +131,36 @@
                     <div class="tab-pane" id="preferences">
                         <h6>Preferences</h6>
                         <hr>
-                        <form>
+                        @using(Html.BeginForm("Preferences","UserProfile")) {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.Id)
+                            @Html.HiddenFor(m => m.EmailAddress)
+                            @Html.HiddenFor(m => m.FirstName)
+                            @Html.HiddenFor(m => m.LastName)
                             <div class="form-group">
                                 <label for="Budget">Weekly Budget</label>
                                 
                                 <input type="number" class="form-control" id="budget" aria-describedby="budgetHelp" placeholder="Enter an amount" value="0">
                             </div>
                             <hr>
-                        </form>
+                            <div class="form-group">
+                                <label>Allergies</label>
+                                <select asp-for="Allergies"
+                                    id="allergies"
+                                    class="form-control"
+                                    asp-items="Html.GetEnumSelectList<Allergies>()">
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-outline-primary">Save</button>
+                        }
                     </div>
                     <div class="tab-pane" id="history">
                         <h6>History</h6>
                         <hr>
-                        <form>
-                            <div class="form-group mb-0">
-                                <label class="d-block">Meal Plan History</label>
-                                <div class="border border-gray-500 bg-gray-200 p-3 text-center font-size-sm">You have not made any meal plans.</div>
-                            </div>
-                        </form>
+                        <div class="form-group mb-0">
+                            <label class="d-block">Meal Plan History</label>
+                            <div class="border border-gray-500 bg-gray-200 p-3 text-center font-size-sm">You have not made any meal plans.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -158,21 +169,27 @@
 
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Activate the first tab by default
-        var defaultTab = document.querySelector('.nav-link.active');
-        var tabTrigger = new bootstrap.Tab(defaultTab);
-        tabTrigger.show();
+@section scripts{
 
-        // Add click event listeners to each tab link
-        var tabLinks = document.querySelectorAll('.nav-link');
-        tabLinks.forEach(function (tabLink) {
-            tabLink.addEventListener('click', function (event) {
-                event.preventDefault();
-                var tabTrigger = new bootstrap.Tab(event.target);
-                tabTrigger.show();
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Activate the first tab by default
+            var defaultTab = document.querySelector('.nav-link.active');
+            var tabTrigger = new bootstrap.Tab(defaultTab);
+            tabTrigger.show();
+
+            // Add click event listeners to each tab link
+            var tabLinks = document.querySelectorAll('.nav-link');
+            tabLinks.forEach(function (tabLink) {
+                tabLink.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    var tabTrigger = new bootstrap.Tab(event.target);
+                    tabTrigger.show();
+                });
             });
         });
-    });
-</script>
+
+        $("#allergies").selectize();
+    </script>
+
+}
