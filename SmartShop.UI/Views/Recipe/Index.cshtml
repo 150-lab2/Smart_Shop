@@ -1,0 +1,78 @@
+﻿@model string
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #recipe-container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #ingredients-list {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        // Extract data from the provided JSON
+        const recipeResults = @Html.Raw(Model);
+
+        var recipeRow = document.createElement('div');
+        recipeRow.classList.add('recipe-row');
+
+
+        // Iterate through the recipes array
+        for (let i = 0; i < recipeResults.recipes.length; i++) {
+            let recipe = recipeResults.recipes[i];
+
+            // Create a new row container for every two recipes
+            if (i % 2 === 0) {
+                let recipeRow = document.createElement('div');
+                recipeRow.classList.add('recipe-row');
+            }
+
+            // Display recipe details for each recipe
+            let recipeContainer = document.createElement('div');
+            recipeContainer.classList.add('recipe-container');
+
+            let imageElement = document.createElement('img');
+            imageElement.src = recipe.image;
+
+            let titleElement = document.createElement('h2');
+            titleElement.textContent = recipe.title;
+
+            // Append title and image elements to the container
+            
+            recipeContainer.appendChild(imageElement);
+            recipeContainer.appendChild(titleElement);
+
+            // Append the container to the current row or document body
+            if (i % 2 === 0) {
+                recipeRow.appendChild(recipeContainer);
+                document.body.appendChild(recipeRow);
+            } else {
+                document.body.appendChild(recipeContainer);
+            }
+        }
+    </script>
+
+
+</body>
+</html>
