@@ -19,7 +19,6 @@ namespace Data.Config
                 .OwnsOne(x => x.Measures, measures =>
                 {
                     measures.OwnsOne(m => m.Us);
-                    measures.OwnsOne(m => m.Metric);
                 });
         }
     }
