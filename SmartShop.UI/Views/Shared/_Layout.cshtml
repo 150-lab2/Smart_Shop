@@ -80,6 +80,7 @@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+
     </div>
 
   <footer class="border-top footer text-muted">
@@ -103,6 +104,8 @@
                 window.open(url);
             }
         }
+
+
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

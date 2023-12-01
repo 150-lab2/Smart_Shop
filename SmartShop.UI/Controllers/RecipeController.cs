@@ -55,7 +55,8 @@ namespace SmartShop.UI.Controllers
 
                 // This is a brutal sloppy last second hack, we really should have a page that accepts a single recipie without being in a json list
                 recipeData = "{\"recipes\":[" + recipeData + "]}";
-                return View("Recipe", recipeData);
+                //return PartialView("RecipePartial", recipeData);
+                return Json(recipeData);
             }
             catch (Exception ex)
             {
