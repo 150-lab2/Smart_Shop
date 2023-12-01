@@ -88,27 +88,18 @@
             // Create view button for each recipe
             var viewRecipe = document.createElement('button');
             viewRecipe.textContent = "VIEW";
-            viewRecipe.style
+            viewRecipe.classList.add("btn");
+            viewRecipe.classList.add("btn-outline-primary");
 
             // Add an event listener to the button
             viewRecipe.addEventListener('click', function () {
                 // Handle the button click event here
                 console.log('Button clicked for recipe:', recipe.title);
                 
-                // Create an object with the properties you want to encode
-                var recipeData = {
-                    id: recipe.id,
-                    //title: recipe.title,
-                    // Add other properties as needed
-                };
-
-                // Convert the recipe object to a JSON string and encode it
-                var encodedRecipe = encodeURIComponent(JSON.stringify(recipeData));
-
                 // Construct the URL dynamically with the encoded recipe as a query parameter
-                var url = '@Url.Action("ViewRecipe", "Recipe")' +
-                    '?encodedRecipe=' + encodedRecipe;
+                var url = '@Url.Action("ViewRecipe", "Recipe")' + '?id=' + recipe.id;
 
+                console.log(url);
                 // Open a new window/tab with the constructed URL
                 window.open(url, '_blank');
             });
