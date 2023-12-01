@@ -52,6 +52,9 @@ namespace SmartShop.UI.Controllers
                 var smartShopClient = _httpClientFactory.CreateClient("SmartShopClient");
                 ///                                                          Recipe/GetRecipe?id=641730
                 var recipeData = await smartShopClient.GetStringAsync($"/api/Recipe/GetRecipe?id={id}");
+
+                // This is a brutal sloppy last second hack, we really should have a page that accepts a single recipie without being in a json list
+                recipeData = "{\"recipes\":[" + recipeData + "]}";
                 return View("Recipe", recipeData);
             }
             catch (Exception ex)
